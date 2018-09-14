@@ -1,51 +1,10 @@
-# Variables ====================================================================
-
-variable "rds_db_username" {
-  default = "admin"
-}
-
-variable "rds_instance_class" {
-  default = "db.m4.large"
-}
-
-variable "rds_instance_count" {
-  type    = "string"
-  default = 0
-}
-
-variable "availability_zones" {
-}
-
-variable "env_name" {
-}
-
-variable "tags" {
-}
-
-variable "vpc_cidr" {
-}
-
-variable "vpc_id" {
-}
-
-variable "default_tags" {
-}
-
-locals {
-  rds_cidr = "${cidrsubnet(var.vpc_cidr, 6, 3)}"
-}
-
-# Resources ====================================================================
-
 resource "aws_subnet" "rds_subnets" {
   count             = "${length(var.availability_zones)}"
   vpc_id            = "${var.vpc_id}"
   cidr_block        = "${cidrsubnet(local.rds_cidr, 2, count.index)}"
   availability_zone = "${element(var.availability_zones, count.index)}"
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-rds-subnet${count.index}")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-rds-subnet${count.index}"))}"
 }
 
 resource "aws_db_subnet_group" "rds_subnet_group" {
@@ -54,9 +13,7 @@ resource "aws_db_subnet_group" "rds_subnet_group" {
 
   subnet_ids = ["${aws_subnet.rds_subnets.*.id}"]
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-db-subnet-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-db-subnet-group"))}"
 }
 
 resource "aws_security_group" "mysql_security_group" {
@@ -78,9 +35,7 @@ resource "aws_security_group" "mysql_security_group" {
     to_port     = 0
   }
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-mysql-security-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-mysql-security-group"))}"
 }
 
 resource "random_string" "rds_password" {
@@ -107,24 +62,5 @@ resource "aws_db_instance" "rds" {
 
   count = "${var.rds_instance_count}"
 
-  tags = "${merge(var.tags, var.default_tags)}"
-}
-
-# Outputs ======================================================================
-
-output "rds_address" {
-  value = "${element(concat(aws_db_instance.rds.*.address, list("")), 0)}"
-}
-
-output "rds_port" {
-  value = "${element(concat(aws_db_instance.rds.*.port, list("")), 0)}"
-}
-
-output "rds_username" {
-  value = "${element(concat(aws_db_instance.rds.*.username, list("")), 0)}"
-}
-
-output "rds_password" {
-  sensitive = true
-  value     = "${element(concat(aws_db_instance.rds.*.password, list("")), 0)}"
+  tags = "${var.tags}"
 }

@@ -3,9 +3,7 @@ resource "aws_vpc" "vpc" {
   instance_tenancy     = "default"
   enable_dns_hostnames = true
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-vpc")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-vpc"))}"
 }
 
 resource "aws_security_group" "vms_security_group" {
@@ -27,15 +25,13 @@ resource "aws_security_group" "vms_security_group" {
     to_port     = 0
   }
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-vms-security-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-vms-security-group"))}"
 }
 
 resource "aws_security_group" "nat_security_group" {
   name        = "nat_security_group"
   description = "NAT Security Group"
-  vpc_id      = "${var.vpc_id}"
+  vpc_id      = "${aws_vpc.vpc.id}"
 
   ingress {
     cidr_blocks = ["${var.vpc_cidr}"]
@@ -51,9 +47,7 @@ resource "aws_security_group" "nat_security_group" {
     to_port     = 0
   }
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-nat-security-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-nat-security-group"))}"
 }
 
 resource "aws_instance" "nat" {
@@ -61,26 +55,14 @@ resource "aws_instance" "nat" {
   instance_type          = "t2.medium"
   vpc_security_group_ids = ["${aws_security_group.nat_security_group.id}"]
   source_dest_check      = false
-  subnet_id              = "${var.public_subnet_id}"
+  subnet_id              = "${element(aws_subnet.public_subnets.*.id, 0)}"
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-nat")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-nat"))}"
 }
 
 resource "aws_eip" "nat_eip" {
   instance = "${aws_instance.nat.id}"
   vpc      = true
 
-  tags = "${merge(var.tags, var.default_tags)}"
-}
-
-resource "aws_route_table" "private_route_table" {
-  count  = "${length(var.availability_zones)}"
-  vpc_id = "${var.vpc_id}"
-
-  route {
-    cidr_block  = "0.0.0.0/0"
-    instance_id = "${aws_instance.nat.id}"
-  }
+  tags = "${var.tags}"
 }

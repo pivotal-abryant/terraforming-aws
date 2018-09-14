@@ -1,26 +1,14 @@
-variable "availability_zones" {
-}
+variable "env_name" {}
 
-variable "env_name" {
-}
+variable "availability_zones" {}
 
-variable "tags" {
-}
+variable "vpc_cidr" {}
 
-variable "vpc_cidr" {
-}
+variable "vpc_id" {}
 
-variable "vpc_id" {
-}
+variable "private_route_table_ids" {}
 
-variable "default_tags" {
-}
-
-variable "private_route_table_ids" {
-}
-
-variable "bucket_suffix" {
-}
+variable "bucket_suffix" {}
 
 variable "create_backup_pas_buckets" {
   default = false
@@ -30,13 +18,14 @@ variable "create_versioned_pas_buckets" {
   default = false
 }
 
-variable "blobstore_kms_key_arn" {
-}
+variable "blobstore_kms_key_arn" {}
 
-variable "ops_manager_iam_user_name" {
-}
+variable "ops_manager_iam_user_name" {}
 
-variable "iam_ops_manager_role_name" {
+variable "iam_ops_manager_role_name" {}
+
+variable "tags" {
+  type = "map"
 }
 
 locals {

@@ -1,3 +1,10 @@
+resource "tls_private_key" "ssl_private_key" {
+  algorithm = "RSA"
+  rsa_bits  = "2048"
+
+  count = "${length(var.ssl_ca_cert) > 0 ? 1 : 0}"
+}
+
 resource "tls_cert_request" "ssl_csr" {
   key_algorithm   = "RSA"
   private_key_pem = "${tls_private_key.ssl_private_key.private_key_pem}"
@@ -36,13 +43,6 @@ resource "tls_locally_signed_cert" "ssl_cert" {
     "digital_signature",
     "server_auth",
   ]
-}
-
-resource "tls_private_key" "ssl_private_key" {
-  algorithm = "RSA"
-  rsa_bits  = "2048"
-
-  count = "${length(var.ssl_ca_cert) > 0 ? 1 : 0}"
 }
 
 resource "tls_cert_request" "isoseg_ssl_csr" {
@@ -146,9 +146,7 @@ resource "aws_security_group" "elb_security_group" {
     to_port     = 0
   }
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "${var.env_name}-elb-security-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-elb-security-group"))}"
 }
 
 resource "aws_elb" "web_elb" {
@@ -211,9 +209,7 @@ resource "aws_security_group" "ssh_elb_security_group" {
     to_port     = 0
   }
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "${var.env_name}-ssh-elb-security-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-ssh-elb-security-group"))}"
 }
 
 resource "aws_elb" "ssh_elb" {
@@ -260,9 +256,7 @@ resource "aws_security_group" "tcp_elb_security_group" {
     to_port     = 0
   }
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "${var.env_name}-tcp-elb-security-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-tcp-elb-security-group"))}"
 }
 
 resource "aws_elb" "tcp_elb" {
@@ -1018,9 +1012,7 @@ resource "aws_security_group" "isoseg_elb_security_group" {
     to_port     = 0
   }
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "${var.env_name}-isoseg-elb-security-group")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-isoseg-elb-security-group"))}"
 }
 
 resource "aws_elb" "isoseg" {
@@ -1065,5 +1057,5 @@ resource "aws_elb" "isoseg" {
   security_groups = ["${aws_security_group.isoseg_elb_security_group.id}"]
   subnets         = ["${aws_subnet.public_subnets.*.id}"]
 
-  tags = "${merge(var.tags, local.default_tags)}"
+  tags = "${var.tags}"
 }

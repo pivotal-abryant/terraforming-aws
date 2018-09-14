@@ -39,7 +39,3 @@ variable "bucket_suffix" {}
 variable "tags" {
   type = "map"
 }
-
-variable "default_tags" {
-  type = "map"
-}

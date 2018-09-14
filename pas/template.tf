@@ -1,5 +1,3 @@
-# ========= Buckets ============================================================
-
 resource "aws_s3_bucket" "buildpacks_bucket" {
   bucket        = "${var.env_name}-buildpacks-bucket-${var.bucket_suffix}"
   force_destroy = true
@@ -8,9 +6,7 @@ resource "aws_s3_bucket" "buildpacks_bucket" {
     enabled = "${var.create_versioned_pas_buckets}"
   }
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "Elastic Runtime S3 Buildpacks Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Buildpacks Bucket"))}"
 }
 
 resource "aws_s3_bucket" "droplets_bucket" {
@@ -21,9 +17,7 @@ resource "aws_s3_bucket" "droplets_bucket" {
     enabled = "${var.create_versioned_pas_buckets}"
   }
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "Elastic Runtime S3 Droplets Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Droplets Bucket"))}"
 }
 
 resource "aws_s3_bucket" "packages_bucket" {
@@ -34,9 +28,7 @@ resource "aws_s3_bucket" "packages_bucket" {
     enabled = "${var.create_versioned_pas_buckets}"
   }
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "Elastic Runtime S3 Packages Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Packages Bucket"))}"
 }
 
 resource "aws_s3_bucket" "resources_bucket" {
@@ -47,9 +39,7 @@ resource "aws_s3_bucket" "resources_bucket" {
     enabled = "${var.create_versioned_pas_buckets}"
   }
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "Elastic Runtime S3 Resources Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Resources Bucket"))}"
 }
 
 # ================== IAM Policies ==============================================
@@ -120,9 +110,7 @@ resource "aws_s3_bucket" "buildpacks_backup_bucket" {
 
   count = "${var.create_backup_pas_buckets ? 1 : 0}"
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "Elastic Runtime S3 Buildpacks Backup Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Buildpacks Backup Bucket"))}"
 }
 
 resource "aws_s3_bucket" "droplets_backup_bucket" {
@@ -131,9 +119,7 @@ resource "aws_s3_bucket" "droplets_backup_bucket" {
 
   count = "${var.create_backup_pas_buckets ? 1 : 0}"
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "Elastic Runtime S3 Droplets Backup Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Droplets Backup Bucket"))}"
 }
 
 resource "aws_s3_bucket" "packages_backup_bucket" {
@@ -142,9 +128,7 @@ resource "aws_s3_bucket" "packages_backup_bucket" {
 
   count = "${var.create_backup_pas_buckets ? 1 : 0}"
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "Elastic Runtime S3 Packages Backup Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Packages Backup Bucket"))}"
 }
 
 resource "aws_s3_bucket" "resources_backup_bucket" {
@@ -153,9 +137,7 @@ resource "aws_s3_bucket" "resources_backup_bucket" {
 
   count = "${var.create_backup_pas_buckets ? 1 : 0}"
 
-  tags = "${merge(var.tags, local.default_tags,
-    map("Name", "Elastic Runtime S3 Resources Backup Bucket")
-  )}"
+  tags = "${merge(var.tags, map("Name", "Elastic Runtime S3 Resources Backup Bucket"))}"
 }
 
 # ================== Backup IAM Policies ======================================
@@ -230,9 +212,7 @@ resource "aws_subnet" "services_subnets" {
   cidr_block        = "${cidrsubnet(local.services_cidr, 2, count.index)}"
   availability_zone = "${element(var.availability_zones, count.index)}"
 
-  tags = "${merge(var.tags, var.default_tags,
-    map("Name", "${var.env_name}-services-subnet${count.index}")
-  )}"
+  tags = "${merge(var.tags, map("Name", "${var.env_name}-services-subnet${count.index}"))}"
 }
 
 data "template_file" "services_subnet_gateways" {

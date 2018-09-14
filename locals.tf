@@ -10,4 +10,6 @@ locals {
     Environment = "${var.env_name}"
     Application = "Cloud Foundry"
   }
+
+  actual_tags = "${merge(var.tags, local.default_tags)}"
 }
