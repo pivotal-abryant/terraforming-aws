@@ -2,6 +2,10 @@ variable "env_name" {}
 
 variable "region" {}
 
+variable "hosted_zone" {}
+
+variable "dns_suffix" {}
+
 variable "availability_zones" {
   type = "list"
 }

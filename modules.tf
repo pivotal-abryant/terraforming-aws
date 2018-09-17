@@ -10,6 +10,9 @@ module "infra" {
   availability_zones = "${var.availability_zones}"
   vpc_cidr           = "${var.vpc_cidr}"
 
+  hosted_zone        = "${var.hosted_zone}"
+  dns_suffix         = "${var.dns_suffix}"
+
   tags               = "${local.actual_tags}"
 }
 
@@ -28,7 +31,7 @@ module "ops_manager" {
   vpc_id                    = "${module.infra.vpc_id}"
   vpc_cidr                  = "${var.vpc_cidr}"
   dns_suffix                = "${var.dns_suffix}"
-  zone_id                   = "${local.zone_id}"
+  zone_id                   = "${module.infra.zone_id}"
   iam_ops_manager_user_name = "${aws_iam_user.ops_manager.name}"
   iam_ops_manager_role_name = "${aws_iam_role.ops_manager.name}"
   iam_ops_manager_role_arn  = "${aws_iam_role.ops_manager.arn}"
@@ -61,6 +64,10 @@ module "pas" {
   ops_manager_iam_user_name = "${aws_iam_user.ops_manager.name}"
   iam_ops_manager_role_name = "${aws_iam_role.ops_manager.name}"
 
+  public_subnet_ids         = "${module.infra.public_subnet_ids}"
+  dns_suffix                = "${var.dns_suffix}"
+  zone_id                   = "${module.infra.zone_id}"
+
   tags                      = "${local.actual_tags}"
 }
 
@@ -75,30 +82,6 @@ module "rds" {
   availability_zones = "${var.availability_zones}"
   vpc_cidr           = "${var.vpc_cidr}"
   vpc_id             = "${module.infra.vpc_id}"
-
-  tags               = "${local.actual_tags}"
-}
-
-module "public" {
-  source = "./public"
-
-  env_name           = "${var.env_name}"
-  availability_zones = "${var.availability_zones}"
-  vpc_cidr           = "${var.vpc_cidr}"
-  vpc_id             = "${module.infra.vpc_id}"
-  dns_suffix         = "${var.dns_suffix}"
-
-  ssl_cert_arn       = "${var.ssl_cert_arn}"
-  ssl_ca_private_key = "${var.ssl_ca_private_key}"
-  ssl_ca_cert        = "${var.ssl_ca_cert}"
-  ssl_private_key    = "${var.ssl_private_key}"
-  ssl_cert           = "${var.ssl_cert}"
-
-  isoseg_ssl_ca_private_key = "${var.isoseg_ssl_ca_private_key}"
-  isoseg_ssl_ca_cert        = "${var.isoseg_ssl_ca_cert}"
-  isoseg_ssl_private_key    = "${var.isoseg_ssl_private_key}"
-  isoseg_ssl_cert           = "${var.isoseg_ssl_cert}"
-  create_isoseg_resources   = "${var.create_isoseg_resources}"
 
   tags               = "${local.actual_tags}"
 }

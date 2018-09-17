@@ -21,7 +21,7 @@ resource "aws_s3_bucket" "droplets_bucket" {
 }
 
 resource "aws_s3_bucket" "packages_bucket" {
-  bucket        = "${var.env_name}-packages-bucket-${local.bucket_suffix}"
+  bucket        = "${var.env_name}-packages-bucket-${var.bucket_suffix}"
   force_destroy = true
 
   versioning {
@@ -32,7 +32,7 @@ resource "aws_s3_bucket" "packages_bucket" {
 }
 
 resource "aws_s3_bucket" "resources_bucket" {
-  bucket        = "${var.env_name}-resources-bucket-${local.bucket_suffix}"
+  bucket        = "${var.env_name}-resources-bucket-${var.bucket_suffix}"
   force_destroy = true
 
   versioning {
@@ -123,7 +123,7 @@ resource "aws_s3_bucket" "droplets_backup_bucket" {
 }
 
 resource "aws_s3_bucket" "packages_backup_bucket" {
-  bucket        = "${var.env_name}-packages-backup-bucket-${local.bucket_suffix}"
+  bucket        = "${var.env_name}-packages-backup-bucket-${var.bucket_suffix}"
   force_destroy = true
 
   count = "${var.create_backup_pas_buckets ? 1 : 0}"
@@ -132,7 +132,7 @@ resource "aws_s3_bucket" "packages_backup_bucket" {
 }
 
 resource "aws_s3_bucket" "resources_backup_bucket" {
-  bucket        = "${var.env_name}-resources-backup-bucket-${local.bucket_suffix}"
+  bucket        = "${var.env_name}-resources-backup-bucket-${var.bucket_suffix}"
   force_destroy = true
 
   count = "${var.create_backup_pas_buckets ? 1 : 0}"
@@ -203,7 +203,7 @@ data "template_file" "pas_subnet_gateways" {
 resource "aws_route_table_association" "route_pas_subnets" {
   count          = "${length(var.availability_zones)}"
   subnet_id      = "${element(aws_subnet.pas_subnets.*.id, count.index)}"
-  route_table_id = "${element(private_route_table_ids, count.index)}"
+  route_table_id = "${element(var.private_route_table_ids, count.index)}"
 }
 
 resource "aws_subnet" "services_subnets" {
@@ -228,5 +228,5 @@ data "template_file" "services_subnet_gateways" {
 resource "aws_route_table_association" "route_services_subnets" {
   count          = "${length(var.availability_zones)}"
   subnet_id      = "${element(aws_subnet.services_subnets.*.id, count.index)}"
-  route_table_id = "${element(private_route_table_ids, count.index)}"
+  route_table_id = "${element(var.private_route_table_ids, count.index)}"
 }

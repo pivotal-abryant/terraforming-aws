@@ -13,3 +13,7 @@ output "public_subnet_ids" {
 output "private_route_table_ids" {
   value = ["${aws_route_table.private_route_table.*.id}"]
 }
+
+output "zone_id" {
+  value = "${local.zone_id}"
+}

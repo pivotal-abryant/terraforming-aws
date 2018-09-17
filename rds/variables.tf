@@ -13,7 +13,9 @@ variable "rds_instance_count" {
 
 variable "env_name" {}
 
-variable "availability_zones" {}
+variable "availability_zones" {
+  type = "list"
+}
 
 variable "vpc_cidr" {}
 
